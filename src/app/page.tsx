@@ -1,7 +1,6 @@
 "use client";
 import Head from "next/head";
 import Link from "next/link";
-import SignupPage from "./signup/page";
 
 export default function Home() {
   return (
