@@ -3,7 +3,7 @@ import dbConnect from '@/lib/dbConnect';
 import Coffee from '@/models/Coffee';
 
 type CoffeeIdParam = {
-    params: Promise<{ userid: string }>
+    params: Promise<{ coffee: string }>
 }
 
 export async function GET(request: Request, { params }: CoffeeIdParam) {
