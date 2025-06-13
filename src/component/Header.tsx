@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import CartButton from "./CartButton";
 
 export default function Header({ showLinks = true, noBackground = true }) {
   return (
@@ -32,6 +33,9 @@ export default function Header({ showLinks = true, noBackground = true }) {
 
         {/* Auth Buttons (optional: make these conditional too) */}
         <div className="flex-1 flex justify-end space-x-4">
+          <Link href="/cart">
+            <CartButton name={"Cart"}/>
+          </Link>
           <Link
             href="/login"
             className="text-white font-bold px-4 py-1 rounded hover:bg-orange-950 hover:text-[#e8dfb1] text-md"

@@ -42,6 +42,7 @@ export default function Home() {
               {menuItems.map((item, index) => (
                 <CoffeeCard 
                     imgsrc={item.imgsrc} 
+                    key={index}
                     name={item.name} 
                     price={item.price} 
                     roastLevel={item.roastLevel} 

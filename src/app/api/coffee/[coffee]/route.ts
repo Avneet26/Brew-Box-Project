@@ -2,37 +2,43 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import Coffee from '@/models/Coffee';
 
-type CoffeeIdParam = {
-    params: Promise<{ coffee: string }>
-}
+type CoffeeNameParam = {
+  params: Promise<{ coffee: string }>; // 'coffee' here will be the name
+};
 
-export async function GET(request: Request, { params }: CoffeeIdParam) {
+export async function GET(request: Request, { params }: CoffeeNameParam) {
   await dbConnect();
-  const {coffee} = await params
-  const user = await Coffee.findById(coffee);
-  if (!user) {
-    return NextResponse.json({ message: 'Coffee not Found' }, { status: 404 });
+  const { coffee } = await params;
+
+  const foundCoffee = await Coffee.findOne({ name: coffee });
+  if (!foundCoffee) {
+    return NextResponse.json({ message: 'Coffee not found' }, { status: 404 });
   }
-  return NextResponse.json(user);
+
+  return NextResponse.json(foundCoffee);
 }
 
-export async function PUT(request: Request, { params }: CoffeeIdParam) {
+export async function PUT(request: Request, { params }: CoffeeNameParam) {
   await dbConnect();
   const body = await request.json();
-  const {coffee} = await params
-  const updatedUser = await Coffee.findByIdAndUpdate(coffee, body, { new: true });
-  if (!updatedUser) {
+  const { coffee } = await params;
+
+  const updatedCoffee = await Coffee.findOneAndUpdate({ name: coffee }, body, { new: true });
+  if (!updatedCoffee) {
     return NextResponse.json({ message: 'Coffee not found' }, { status: 404 });
   }
-  return NextResponse.json(updatedUser);
+
+  return NextResponse.json(updatedCoffee);
 }
 
-export async function DELETE(request: Request, { params }: CoffeeIdParam)   {
+export async function DELETE(request: Request, { params }: CoffeeNameParam) {
   await dbConnect();
-  const {coffee} = await params
-  const deletedUser = await Coffee.findByIdAndDelete(coffee);
-  if (!deletedUser) {
+  const { coffee } = await params;
+
+  const deletedCoffee = await Coffee.findOneAndDelete({ name: coffee });
+  if (!deletedCoffee) {
     return NextResponse.json({ message: 'Coffee not found' }, { status: 404 });
   }
+
   return NextResponse.json({ message: 'Coffee deleted successfully' });
 }
