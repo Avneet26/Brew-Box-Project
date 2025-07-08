@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import Header from "@/component/Header";   // 👈 Import do Header
 import styles from './page.module.css';
 
 <Header showLinks={true} noBackground={false}/>
@@ -38,26 +39,30 @@ export default function ContactPage() {
   };
 
   return (
-    <main className={styles.contactPage}>
-      <h1>Contact Us</h1>
-      <p>Please fill out the form below to get in touch with us. We’ll respond as soon as possible.</p>
+    <>
+      <Header showLinks={true} noBackground={false} />
 
-      <form onSubmit={handleSubmit} className={styles.formContainer}>
-        <label>
-          Name
-          <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-        </label>
-        <label>
-          Email
-          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
-        </label>
-        <label>
-          Message
-          <textarea name="message" rows={5} value={formData.message} onChange={handleChange} required />
-        </label>
-        <button type="submit">Send</button>
-        {status && <p className={styles.statusMessage}>{status}</p>}
-      </form>
-    </main>
+      <main className={styles.contactPage}>
+        <h1>Contact Us</h1>
+        <p>Please fill out the form below to get in touch with us. We’ll respond as soon as possible.</p>
+
+        <form onSubmit={handleSubmit} className={styles.formContainer}>
+          <label>
+            Name
+            <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+          </label>
+          <label>
+            Email
+            <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+          </label>
+          <label>
+            Message
+            <textarea name="message" rows={5} value={formData.message} onChange={handleChange} required />
+          </label>
+          <button type="submit">Send</button>
+          {status && <p className={styles.statusMessage}>{status}</p>}
+        </form>
+      </main>
+    </>
   );
 }
