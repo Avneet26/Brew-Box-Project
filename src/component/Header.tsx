@@ -38,7 +38,7 @@ export default function Header({ showLinks = true, noBackground = true }) {
           </Link>
           <Link
             href="/login"
-            className="text-white font-bold px-4 py-1 rounded hover:bg-orange-950 hover:text-[#e8dfb1] text-md"
+            className="bg-orange-950 text-white px-4 py-1 rounded hover:bg-[#9e4b34] text-md"
           >
             Login
           </Link>
