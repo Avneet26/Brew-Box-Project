@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // <-- import useRouter
 import Header from "@/component/Header";
 
 export default function LoginPage() {
+  const router = useRouter(); // <-- initialize router
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -19,17 +22,55 @@ export default function LoginPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
       setError("Both email and password are required.");
+      setSubmitted(false);
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Invalid email format.");
       return;
     }
 
-    setError("");
-    setSubmitted(true);
-    // TODO: Add real login logic here (API call + redirect)
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Login failed.");
+        setSubmitted(false);
+        return;
+      }
+
+      setError("");
+      setSubmitted(true);
+
+      // Redirect to dashboard (or wherever you want)
+      router.push("/menu"); // <-- change '/dashboard' to your desired page
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("Something went wrong. Please try again.");
+      setSubmitted(false);
+    }
   };
 
   return (
@@ -38,7 +79,6 @@ export default function LoginPage() {
 
       <div className="flex justify-center items-center w-full px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 bg-white rounded-xl shadow-xl shadow-gray-400 overflow-hidden max-w-5xl w-full h-auto">
-          
           {/* Left: Form */}
           <div className="p-8">
             <h2 className="text-3xl font-bold mb-6 text-center">Login</h2>
@@ -76,15 +116,12 @@ export default function LoginPage() {
                   className="px-4 py-2 border border-gray-300 rounded-md text-gray-700"
                 />
               </div>
+
               <div className="flex justify-end mt-1">
-                <a
-                  href="#"
-                  className="text-sm text-blue-600 hover:underline"
-                >
+                <a href="#" className="text-sm text-blue-600 hover:underline">
                   Forgot password?
                 </a>
               </div>
-
 
               <div className="pt-4">
                 <button
