@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from 'react';
-import Header from "@/component/Header";   // 👈 Import do Header
+import Header from "@/component/Header";   // Header
+import Footer from "@/component/TempFooter";
 import styles from './page.module.css';
 
-<Header showLinks={true} noBackground={false}/>
+
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -63,6 +64,7 @@ export default function ContactPage() {
           {status && <p className={styles.statusMessage}>{status}</p>}
         </form>
       </main>
+      <Footer />
     </>
   );
 }
