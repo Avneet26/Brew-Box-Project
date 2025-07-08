@@ -2,9 +2,8 @@
 
 import { useState } from 'react';
 import styles from './page.module.css';
-import Header from "@/component/Header";
-import Image from "next/image";
 
+<Header showLinks={true} noBackground={false}/>
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
