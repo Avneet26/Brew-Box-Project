@@ -3,6 +3,7 @@ import Head from "next/head";
 import Header from "@/component/Header";
 import { useEffect, useState } from "react";
 import CoffeeCard from "@/component/CoffeeCard";
+import TempFooter from "@/component/TempFooter";
 
 type CoffeeSchema = {
   name: string;
@@ -53,6 +54,7 @@ export default function Home() {
             <p>Loading menu...</p>
           )}
         </section>
+        <TempFooter />
       </main>
     </div>
   );
