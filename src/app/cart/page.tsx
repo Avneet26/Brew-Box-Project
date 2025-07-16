@@ -1,11 +1,11 @@
-"use client";
-import { useCart } from "@/context/cartContext";
-import Header from "@/component/Header";
-import Footer from "@/component/TempFooter";
-import Image from "next/image";
-import { Dispatch, SetStateAction, ChangeEvent } from "react";
+'use client';
 
-// Define the shape of a cart item
+import { useCart } from '@/context/cartContext';
+import Header from '@/component/Header';
+import Footer from '@/component/TempFooter';
+import Image from 'next/image';
+import { Dispatch, SetStateAction, ChangeEvent } from 'react';
+
 interface CartItem {
   imgsrc: string;
   name: string;
@@ -15,25 +15,54 @@ interface CartItem {
 }
 
 export default function Cart() {
-  // Destructure cart and setCart with proper types
-  const { cart, setCart }: { cart: CartItem[]; setCart: Dispatch<SetStateAction<CartItem[]>> } = useCart();
+  const {
+    cart,
+    setCart,
+  }: {
+    cart: CartItem[];
+    setCart: Dispatch<SetStateAction<CartItem[]>>;
+  } = useCart();
 
-  // Remove an item from the cart
-  const removeFromCart = (name: string) => {
+  // Remove an item
+  const removeFromCart = (name: string) =>
     setCart(cart.filter((item) => item.name !== name));
-  };
 
-  // Update quantity of an item
-  const updateQuantity = (name: string, quantity: number) => {
+  // Update quantity
+  const updateQuantity = (name: string, quantity: number) =>
     setCart(
       cart.map((item) =>
         item.name === name ? { ...item, quantity: Math.max(1, quantity) } : item
       )
     );
-  };
 
-  // Calculate subtotal with explicit types
-  const subtotal: number = cart.reduce((sum: number, item: CartItem) => sum + item.price * item.quantity, 0);
+  // Compute subtotal
+  const subtotal: number = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
+  // Send POST to API
+  const handleCheckout = async () => {
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cart, subtotal }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(`Order created! ID: ${data.order.id}`);
+        setCart([]); // clear the cart
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error. Please try again.');
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -46,9 +75,9 @@ export default function Cart() {
           <p className="text-center text-gray-600">Your cart is empty.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Cart Items List */}
+            {/* Cart Items */}
             <div>
-              {cart.map((item: CartItem) => (
+              {cart.map((item) => (
                 <div
                   key={item.name}
                   className="flex items-center bg-white shadow rounded-lg p-4 mb-4"
@@ -63,8 +92,12 @@ export default function Cart() {
                   </div>
                   <div className="flex-1 ml-4">
                     <h2 className="text-xl font-medium">{item.name}</h2>
-                    <p className="text-gray-600">Roast Level: {item.roastLevel}</p>
-                    <p className="text-gray-600">Price: ${item.price.toFixed(2)}</p>
+                    <p className="text-gray-600">
+                      Roast Level: {item.roastLevel}
+                    </p>
+                    <p className="text-gray-600">
+                      Price: ${item.price.toFixed(2)}
+                    </p>
                     <div className="flex items-center space-x-2 mt-2">
                       <label htmlFor={`qty-${item.name}`} className="sr-only">
                         Quantity
@@ -75,7 +108,10 @@ export default function Cart() {
                         min={1}
                         value={item.quantity}
                         onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          updateQuantity(item.name, parseInt(e.target.value, 10))
+                          updateQuantity(
+                            item.name,
+                            parseInt(e.target.value, 10)
+                          )
                         }
                         className="w-16 border rounded p-1"
                       />
@@ -110,6 +146,7 @@ export default function Cart() {
                 <span>${subtotal.toFixed(2)}</span>
               </div>
               <button
+                onClick={handleCheckout}
                 className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
               >
                 Checkout
