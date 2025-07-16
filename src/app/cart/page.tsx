@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 'use client';
 
 import { useCart } from '@/context/cartContext';
@@ -5,6 +6,15 @@ import Header from '@/component/Header';
 import Footer from '@/component/TempFooter';
 import Image from 'next/image';
 import { Dispatch, SetStateAction, ChangeEvent } from 'react';
+=======
+"use client";
+import { useCart } from "@/context/cartContext";
+import Header from "@/component/Header";
+import Footer from "@/component/TempFooter";
+import Image from "next/image";
+import { Dispatch, SetStateAction, ChangeEvent, useState } from "react";
+import Link from "next/link";
+>>>>>>> dfb501de5e742fcd61dcaf615948957008404a52
 
 interface CartItem {
   imgsrc: string;
@@ -35,6 +45,7 @@ export default function Cart() {
       )
     );
 
+<<<<<<< HEAD
   // Compute subtotal
   const subtotal: number = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -63,6 +74,12 @@ export default function Cart() {
       alert('Network error. Please try again.');
     }
   };
+=======
+  // Calculate subtotal with explicit types
+  const subtotal: number = cart.reduce((sum: number, item: CartItem) => sum + item.price * item.quantity, 0);
+  const taxes = subtotal * 0.13;
+  const cartTotal = subtotal + taxes;
+>>>>>>> dfb501de5e742fcd61dcaf615948957008404a52
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -138,19 +155,32 @@ export default function Cart() {
                 <span>${subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between mb-4">
+                <span>Taxes</span>
+                <span>${taxes.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between mb-4">
                 <span>Shipping</span>
-                <span>Free</span>
+                <span>Calculated At Checkout</span>
+              </div>
+              <div className="flex justify-between mb-4">
+                <span>New Order Will Be Processed On</span>
+                <span>{new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('en-GB')}</span>
               </div>
               <div className="flex justify-between font-semibold text-lg mb-6">
                 <span>Total</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>${cartTotal.toFixed(2)}</span>
               </div>
+<<<<<<< HEAD
               <button
                 onClick={handleCheckout}
                 className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
+=======
+              <Link
+                href="/checkout" className="block text-center w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
+>>>>>>> dfb501de5e742fcd61dcaf615948957008404a52
               >
                 Checkout
-              </button>
+              </Link>
             </div>
           </div>
         )}

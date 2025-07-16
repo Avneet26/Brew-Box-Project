@@ -28,7 +28,7 @@ export default function Home() {
         </div>
         <Header showLinks={true} noBackground={true} />
         <div className="flex h-full items-center justify-center text-center text-[#603F26] px-4">
-          <div>
+          <div style={{"marginBottom": "150px"}}>
             <h1 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">
               Welcome to BrewBox
             </h1>
