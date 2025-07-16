@@ -1,4 +1,5 @@
 import Header from "@/component/Header";
+import TempFooter from "@/component/TempFooter";
 import Image from "next/image";
 
 export default function About() {
@@ -6,7 +7,7 @@ export default function About() {
     <>
       <Header showLinks={true} noBackground={false} />
       
-      <div className="flex flex-row  min-h-screen pt-20 px-20">
+      <div className="flex flex-row  min-h-screen pt-20 px-20 mb-[100px]">
         <div className="flex-1 pr-10">
           <h1 className="text-5xl mb-6 font-sans">About Us</h1>
           <p className="max-w-xl text-lg font-sans">
@@ -25,6 +26,8 @@ export default function About() {
           />
         </div>
       </div>
+
+      <TempFooter />
     </>
   );
 }

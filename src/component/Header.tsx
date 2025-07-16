@@ -11,7 +11,7 @@ export default function Header({ showLinks = true, noBackground = true }) {
         {/* Logo */}
         <div className="flex-1 flex items-center h-12 mt-2.5 mb-2.5">
         <Image
-          src="/BrewBoxLogo.png"
+          src="/images/BrewBoxLogo.png"
           alt="BrewBox Logo"
           width={80}
           height={45}
