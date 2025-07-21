@@ -1,20 +1,11 @@
-<<<<<<< HEAD
 'use client';
 
 import { useCart } from '@/context/cartContext';
 import Header from '@/component/Header';
 import Footer from '@/component/TempFooter';
 import Image from 'next/image';
-import { Dispatch, SetStateAction, ChangeEvent } from 'react';
-=======
-"use client";
-import { useCart } from "@/context/cartContext";
-import Header from "@/component/Header";
-import Footer from "@/component/TempFooter";
-import Image from "next/image";
-import { Dispatch, SetStateAction, ChangeEvent, useState } from "react";
-import Link from "next/link";
->>>>>>> dfb501de5e742fcd61dcaf615948957008404a52
+import Link from 'next/link';
+import { Dispatch, SetStateAction, ChangeEvent, useState } from 'react';
 
 interface CartItem {
   imgsrc: string;
@@ -25,61 +16,49 @@ interface CartItem {
 }
 
 export default function Cart() {
-  const {
-    cart,
-    setCart,
-  }: {
+  const { cart, setCart }: {
     cart: CartItem[];
     setCart: Dispatch<SetStateAction<CartItem[]>>;
   } = useCart();
 
-  // Remove an item
+  const [loading, setLoading] = useState(false);
+
   const removeFromCart = (name: string) =>
-    setCart(cart.filter((item) => item.name !== name));
+    setCart(cart.filter(item => item.name !== name));
 
-  // Update quantity
   const updateQuantity = (name: string, quantity: number) =>
-    setCart(
-      cart.map((item) =>
-        item.name === name ? { ...item, quantity: Math.max(1, quantity) } : item
-      )
-    );
+    setCart(cart.map(item =>
+      item.name === name ? { ...item, quantity: Math.max(1, quantity) } : item
+    ));
 
-<<<<<<< HEAD
-  // Compute subtotal
-  const subtotal: number = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const subtotal: number = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const taxes: number = subtotal * 0.13;
+  const cartTotal: number = subtotal + taxes;
 
-  // Send POST to API
+  const nextProcessDate = new Date();
+  nextProcessDate.setMonth(nextProcessDate.getMonth() + 1);
+
   const handleCheckout = async () => {
+    setLoading(true);
     try {
-      const response = await fetch('/api/orders', {
+      const resp = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cart, subtotal }),
+        body: JSON.stringify({ cart, subtotal, taxes, total: cartTotal }),
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(`Order created! ID: ${data.order.id}`);
-        setCart([]); // clear the cart
-      } else {
-        alert(`Error: ${data.message}`);
+      const data = await resp.json();
+      if (!resp.ok) {
+        throw new Error(data.message || 'Unknown error');
       }
-    } catch (err) {
-      console.error(err);
-      alert('Network error. Please try again.');
+      alert(`Order created! ID: ${data.order.id}`);
+      setCart([]);
+    } catch (err: any) {
+      console.error('Checkout error:', err);
+      alert(`Checkout failed: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
   };
-=======
-  // Calculate subtotal with explicit types
-  const subtotal: number = cart.reduce((sum: number, item: CartItem) => sum + item.price * item.quantity, 0);
-  const taxes = subtotal * 0.13;
-  const cartTotal = subtotal + taxes;
->>>>>>> dfb501de5e742fcd61dcaf615948957008404a52
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -94,48 +73,29 @@ export default function Cart() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Cart Items */}
             <div>
-              {cart.map((item) => (
-                <div
-                  key={item.name}
-                  className="flex items-center bg-white shadow rounded-lg p-4 mb-4"
-                >
+              {cart.map(item => (
+                <div key={item.name} className="flex items-center bg-white shadow rounded-lg p-4 mb-4">
                   <div className="w-24 h-24 relative">
-                    <Image
-                      src={item.imgsrc}
-                      alt={item.name}
-                      fill
-                      className="object-contain rounded"
-                    />
+                    <Image src={item.imgsrc} alt={item.name} fill className="object-contain rounded" />
                   </div>
                   <div className="flex-1 ml-4">
                     <h2 className="text-xl font-medium">{item.name}</h2>
-                    <p className="text-gray-600">
-                      Roast Level: {item.roastLevel}
-                    </p>
-                    <p className="text-gray-600">
-                      Price: ${item.price.toFixed(2)}
-                    </p>
+                    <p className="text-gray-600">Roast Level: {item.roastLevel}</p>
+                    <p className="text-gray-600">Price: ${item.price.toFixed(2)}</p>
                     <div className="flex items-center space-x-2 mt-2">
-                      <label htmlFor={`qty-${item.name}`} className="sr-only">
-                        Quantity
-                      </label>
+                      <label htmlFor={`qty-${item.name}`} className="sr-only">Quantity</label>
                       <input
                         id={`qty-${item.name}`}
                         type="number"
                         min={1}
                         value={item.quantity}
                         onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          updateQuantity(
-                            item.name,
-                            parseInt(e.target.value, 10)
-                          )
+                          updateQuantity(item.name, parseInt(e.target.value, 10))
                         }
                         className="w-16 border rounded p-1"
                       />
                     </div>
-                    <p className="font-semibold mt-2">
-                      Total: ${(item.price * item.quantity).toFixed(2)}
-                    </p>
+                    <p className="font-semibold mt-2">Total: ${(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                   <button
                     onClick={() => removeFromCart(item.name)}
@@ -154,33 +114,29 @@ export default function Cart() {
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between mb-4">
-                <span>Taxes</span>
+              <div className="flex justify-between mb-2">
+                <span>Taxes (13%)</span>
                 <span>${taxes.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between mb-4">
+              <div className="flex justify-between mb-2">
                 <span>Shipping</span>
-                <span>Calculated At Checkout</span>
+                <span>Calculated at Checkout</span>
               </div>
               <div className="flex justify-between mb-4">
-                <span>New Order Will Be Processed On</span>
-                <span>{new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('en-GB')}</span>
+                <span>Next Processing Date</span>
+                <span>{nextProcessDate.toLocaleDateString('en-GB')}</span>
               </div>
               <div className="flex justify-between font-semibold text-lg mb-6">
                 <span>Total</span>
                 <span>${cartTotal.toFixed(2)}</span>
               </div>
-<<<<<<< HEAD
               <button
                 onClick={handleCheckout}
-                className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
-=======
-              <Link
-                href="/checkout" className="block text-center w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
->>>>>>> dfb501de5e742fcd61dcaf615948957008404a52
+                disabled={loading}
+                className={`w-full py-3 rounded-lg transition ${loading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'} text-white`}
               >
-                Checkout
-              </Link>
+                {loading ? 'Processing...' : 'Checkout'}
+              </button>
             </div>
           </div>
         )}
