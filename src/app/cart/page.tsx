@@ -3,7 +3,7 @@ import { useCart } from "@/context/cartContext";
 import Header from "@/component/Header";
 import Footer from "@/component/TempFooter";
 import Image from "next/image";
-import { Dispatch, SetStateAction, ChangeEvent, useState } from "react";
+import { Dispatch, SetStateAction, ChangeEvent } from "react";
 import Link from "next/link";
 
 // Define the shape of a cart item
