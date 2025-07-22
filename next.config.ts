@@ -1,9 +1,15 @@
 // next.config.js
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['www.nespresso.com'],  // add any other hostnames you need here
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',      // or e.g. 'cdn.example.com'
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
 };
 

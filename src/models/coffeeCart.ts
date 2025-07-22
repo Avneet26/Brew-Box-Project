@@ -1,16 +1,23 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Model, Schema } from 'mongoose';
 
-// Define the schema for the CoffeeCart collection
-const CoffeeCartSchema = new mongoose.Schema({
-  name: { type: String, required: true },       // Customer's name
-  item: { type: String, required: true },       // Coffee item name
-  id: { type: String, required: true },         // Item ID
-  quantity: { type: Number, required: true },   // Quantity ordered
-  price: { type: Number, required: true },      // Price per unit
-  total: { type: Number, required: true }       // Total price = quantity * price
-}, {
-  timestamps: true // Automatically adds createdAt and updatedAt fields
+export interface ICoffeeCart extends Document {
+  imgsrc: string;
+  name: string;
+  roastLevel: number;
+  price: number;
+  quantity: number;
+}
+
+const CoffeeCartSchema = new Schema({
+  imgsrc: { type: String, required: true },
+  name:    { type: String, required: true },
+  roastLevel: { type: Number, required: true },
+  price:   { type: Number, required: true },
+  quantity:{ type: Number, required: true, min: 1 },
 });
 
-// Export the model or reuse existing one if already defined
-export default mongoose.models.coffeeCart || mongoose.model('coffeeCart', CoffeeCartSchema);
+const CoffeeCart: Model<ICoffeeCart> =
+  mongoose.models.CoffeeCart ||
+  mongoose.model<ICoffeeCart>('CoffeeCart', CoffeeCartSchema);
+
+export default CoffeeCart;
