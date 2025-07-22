@@ -4,7 +4,6 @@ import { useCart } from '@/context/cartContext';
 import Header from '@/component/Header';
 import Footer from '@/component/TempFooter';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Dispatch, SetStateAction, ChangeEvent, useState } from 'react';
 
 interface CartItem {
@@ -52,9 +51,9 @@ export default function Cart() {
       }
       alert(`Order created! ID: ${data.order.id}`);
       setCart([]);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Checkout error:', err);
-      alert(`Checkout failed: ${err.message}`);
+      alert(`Checkout failed: ${(err as Error).message}`);
     } finally {
       setLoading(false);
     }
