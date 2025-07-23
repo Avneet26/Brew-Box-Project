@@ -7,7 +7,7 @@ type propTypes={
 
 export default function CartButton({name}: propTypes) {
 
-    const { cart } = useCart();
+    const { cart } = useCart() as { cart: any[] };
 
     return (
         <div>

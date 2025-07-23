@@ -9,19 +9,7 @@ import { useRouter } from 'next/navigation'; // <-- ✅ Import router
 export default function CartPage() {
   const router = useRouter(); // <-- ✅ Initialize router
 
-  const { cart, loading, removeItem, updateQuantity } = useCart() as {
-    cart: Array<{
-      clientId: string;
-      imgsrc: string;
-      name: string;
-      roastLevel: string;
-      price: number;
-      quantity: number;
-    }>;
-    loading: boolean;
-    removeItem: (id: string) => void;
-    updateQuantity: (id: string, quantity: number) => void;
-  };
+  const { cart, loading, removeItem, updateQuantity } = useCart();
 
   if (loading) return <p>Loading cart...</p>;
   if (!cart.length) return <p>Your cart is empty.</p>;

@@ -1,20 +1,43 @@
-/* context/cartContext.jsx */
+// context/cartContext.tsx
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
-const CartContext = createContext(null);
+export interface CartItem {
+  _id?: string; // from server
+  clientId: string; // generated locally
+  imgsrc: string;
+  name: string;
+  roastLevel: number;
+  price: number;
+  quantity: number;
+}
 
-export function CartProvider({ children }) {
-  const [cart, setCart]       = useState([]);
+interface CartContextType {
+  cart: CartItem[];
+  loading: boolean;
+  addItem: (item: Omit<CartItem, 'clientId' | '_id'>) => Promise<void>;
+  removeItem: (clientId: string) => Promise<void>;
+  updateQuantity: (clientId: string, newQty: number) => Promise<void>;
+}
+
+const CartContext = createContext<CartContextType | null>(null);
+
+export function CartProvider({ children }: { children: ReactNode }) {
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // On mount: clear MongoDB cart and reset local cart to []
   useEffect(() => {
     (async () => {
       try {
         await fetch('/api/coffeeCart', { method: 'DELETE' });
-        setCart([]);                  // ensure local is empty
+        setCart([]);
       } catch (err) {
         console.error('Failed to clear server cart:', err);
       } finally {
@@ -23,13 +46,13 @@ export function CartProvider({ children }) {
     })();
   }, []);
 
-  async function addItem(itemData) {
+  async function addItem(itemData: Omit<CartItem, 'clientId' | '_id'>) {
     const clientId = crypto.randomUUID();
     try {
-      const res   = await fetch('/api/coffeeCart', {
-        method:  'POST',
+      const res = await fetch('/api/coffeeCart', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(itemData),
+        body: JSON.stringify(itemData),
       });
       const saved = await res.json();
       setCart(prev => [...prev, { ...saved, clientId }]);
@@ -38,7 +61,7 @@ export function CartProvider({ children }) {
     }
   }
 
-  async function removeItem(clientId) {
+  async function removeItem(clientId: string) {
     const item = cart.find(i => i.clientId === clientId);
     if (!item) return;
     try {
@@ -49,14 +72,14 @@ export function CartProvider({ children }) {
     }
   }
 
-  async function updateQuantity(clientId, newQty) {
+  async function updateQuantity(clientId: string, newQty: number) {
     const item = cart.find(i => i.clientId === clientId);
     if (!item) return;
     try {
-      const res     = await fetch(`/api/coffeeCart/${item._id}`, {
-        method:  'PATCH',
+      const res = await fetch(`/api/coffeeCart/${item._id}`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ quantity: newQty }),
+        body: JSON.stringify({ quantity: newQty }),
       });
       const updated = await res.json();
       setCart(prev =>
@@ -78,7 +101,7 @@ export function CartProvider({ children }) {
   );
 }
 
-export function useCart() {
+export function useCart(): CartContextType {
   const ctx = useContext(CartContext);
   if (!ctx) throw new Error('useCart must be used within a CartProvider');
   return ctx;
