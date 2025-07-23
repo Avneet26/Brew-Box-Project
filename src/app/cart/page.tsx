@@ -4,8 +4,11 @@ import Header from '@/component/Header';
 import Footer from '@/component/TempFooter';
 import { useCart } from '@/context/cartContext';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation'; // <-- ✅ Import router
 
 export default function CartPage() {
+  const router = useRouter(); // <-- ✅ Initialize router
+
   const { cart, loading, removeItem, updateQuantity } = useCart() as {
     cart: Array<{
       clientId: string;
@@ -24,8 +27,8 @@ export default function CartPage() {
   if (!cart.length) return <p>Your cart is empty.</p>;
 
   const subtotal = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const taxes   = subtotal * 0.13;
-  const total   = subtotal + taxes;
+  const taxes = subtotal * 0.13;
+  const total = subtotal + taxes;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -76,6 +79,7 @@ export default function CartPage() {
               </div>
             ))}
           </div>
+
           {/* Summary */}
           <div className="bg-white shadow rounded-lg p-6">
             <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
@@ -91,8 +95,10 @@ export default function CartPage() {
               <span>Total</span>
               <span>${total.toFixed(2)}</span>
             </div>
+
+            {/*Checkout Button */}
             <button
-              onClick={() => {/* seu checkout */}}
+              onClick={() => router.push('/checkout')}
               className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg"
             >
               Checkout
